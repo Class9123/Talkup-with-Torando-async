@@ -6,7 +6,6 @@ from flask_cors import CORS
 from utility import validate_email_password,extract_username,serialize_dict,deserialize_dict, key_from_value
 from bson import ObjectId
 from imageDb import upload_image
-import threading 
 
 mongo = Mongodb(DEV_MONGO_URI , DB_NAME)
 mongo.connect()
