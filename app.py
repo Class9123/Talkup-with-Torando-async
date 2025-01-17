@@ -175,14 +175,12 @@ def add_friend(data):
   print(f"Added {fem} to {yem}")
   
   ydocument["id"] = ydocument.pop("_id")
-  ydocument["pr"] = "/pr.jpg"
   ydocument["msg"] = "Seee you soon grubnfn ynf y y yndkdufjr yvkfjeur gfbdyd yv a e"
   ydocument.pop("password")
   ydocument.pop("friends") 
   
  
   fdocument["id"] = fdocument.pop("_id")
-  fdocument["pr"] = "/pr.jpg"
   fdocument["msg"] = "Seee you soon grubnfn ynf y y yndkdufjr yvkfjeur gfbdyd yv a e"
   fdocument.pop("password")
   fdocument.pop("friends") 
