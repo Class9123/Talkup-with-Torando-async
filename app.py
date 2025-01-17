@@ -39,7 +39,7 @@ def signup():
     user["id"] = userId
     user.pop("_id" , None)
     print(f"\n User Signuped : {user} \n")
-    return jsonify({"msg": "Account created successfully 🎉" , "credentials" : serialize_dict(user)}), 201
+    return jsonify({"msg": "Account created successfully 🎊🎉" , "credentials" : serialize_dict(user)}), 201
   return jsonify({"msg": result}), 400
 
 @app.route('/login', methods=['POST'])
@@ -251,8 +251,8 @@ def profile_update(data):
 
     
 if __name__ == '__main__':
-  # mongo.users.delete_many({})
-#   mongo.messages.delete_many({})
+  mongo.users.delete_many({})
+  mongo.messages.delete_many({})
   sio.run(app , debug=True) 
   #public fields = id ,name , email , status
-  #private fields = password, friends
+  #private fields = password, friends 
