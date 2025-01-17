@@ -1,3 +1,6 @@
+# import eventlet
+# eventlet.monkey_patch()  
+# 
 from db import Mongodb
 from values import DEV_MONGO_URI , DB_NAME
 from flask import Flask, request , jsonify 
@@ -6,6 +9,7 @@ from flask_cors import CORS
 from utility import validate_email_password,extract_username,serialize_dict,deserialize_dict, key_from_value
 from bson import ObjectId
 from imageDb import upload_image
+
 
 mongo = Mongodb(DEV_MONGO_URI , DB_NAME)
 mongo.connect()
@@ -248,8 +252,6 @@ def profile_update(data):
 
     
 if __name__ == '__main__':
-  mongo.users.delete_many({})
-  mongo.messages.delete_many({})
-  sio.run(app , debug=True) 
+  sio.run(app,host="0.0.0.0" , debug=True) 
   #public fields = id ,name , email , status
   #private fields = password, friends 
