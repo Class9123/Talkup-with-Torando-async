@@ -1,6 +1,6 @@
-import eventlet
-eventlet.monkey_patch()  
-# 
+from gevent import monkey
+monkey.patch_all()
+
 from db import Mongodb
 from values import DEV_MONGO_URI , DB_NAME
 from flask import Flask, request , jsonify 
