@@ -249,7 +249,15 @@ def profile_update(data):
   image_data = data["image"]
   # Use `sio.start_background_task` instead of threading directly
   sio.start_background_task(target=upload_image_in_thread, image_data=image_data, user_id=userId, userSid=request.sid)
-
+  
+@sio.on("DeleteAccount")
+def DeleteAccount(credentials):
+  credentials = deserialize_dict(credentials)
+  userSid = request.sid
+  userId = key_from_value(ids , userSid)
+  if userId == credentials["id"]:
+    query = { "_id":credentials["id"] , "email":credentials["email"] ,"password":credentials["password"] } 
+    print(mongo.users.delete_one(query))
     
 if __name__ == '__main__':
   sio.run(app,host="0.0.0.0" , debug=True) 
