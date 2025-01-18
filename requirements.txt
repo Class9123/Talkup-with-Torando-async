@@ -14,8 +14,8 @@ jedi==0.18.1
 Jinja2==3.1.2
 MarkupSafe==2.1.1
 requests==2.27.1
-gunicorn==20.1.0
-nepali_datetime==2.0.5
+gunicorn==20.0.4
+nepali_datetime==1.0.8.3
 pymongo==4.3.3
 cloudinary==1.30.0
 python-dotenv==0.21.0
