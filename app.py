@@ -167,12 +167,12 @@ def add_friend(data):
     print(f"Added {fem} to {yem}")
     
     ydocument["id"] = ydocument.pop("_id")
-    ydocument["msg"] = "See you soon"
+    ydocument["msg"] = ""
     ydocument.pop("password")
     ydocument.pop("friends")
     
     fdocument["id"] = fdocument.pop("_id")
-    fdocument["msg"] = "See you soon"
+    fdocument["msg"] = ""
     fdocument.pop("password")
     fdocument.pop("friends")
     
@@ -186,11 +186,13 @@ def get_friend_data(fid):
     result = mongo.find_user(query)
     if result:
         result["id"] = result.pop("_id")
-        result["msg"] = "Updated friend"
+        result["msg"] = ""
         result.pop("password")
         result.pop("friends")
         result = serialize_dict(result)
         emit("friend_data", result, to=request.sid)
+    else :
+      emit("remove_friend", fid, to=request.sid)
 
 @sio.on("get_messages")
 def get_messages(friendId):
@@ -239,7 +241,7 @@ def profile_update(data):
         image_data = data["image"]
         # Use `sio.start_background_task` instead of threading directly
         sio.start_background_task(target=upload_image_in_thread, image_data=image_data, user_id=userId, userSid=request.sid)
-
+        
 @sio.on("DeleteAccount")
 def delete_account(credentials):
     credentials = deserialize_dict(credentials)
@@ -247,7 +249,23 @@ def delete_account(credentials):
     userId = key_from_value(ids, userSid)
     if userId == credentials["id"]:
         query = {"_id": credentials["id"], "email": credentials["email"], "password": credentials["password"]}
-        print(mongo.users.delete_one(query))
+        result = mongo.find_user(query)
+        user_id = result["_id"]
+        friends = result["friends"]
+        
+        # Delete the user from the database
+        mongo.users.delete_one(query)
+        
+        # Update each friend to remove the user from their friends list and emit the remove_friend message
+        for fid in friends:
+            friend_query = { "_id": fid }
+            mongo.users.update_one(friend_query, {"$pull": {"friends": user_id}})
+            friendSid = ids.get(fid)
+            if friendSid:
+                sio.emit("remove_friend", str(user_id), to=friendSid)
+            else:
+                print("Friend is not connected")
+        
 
 if __name__ == '__main__':
     sio.run(app, host="0.0.0.0", debug=True)
