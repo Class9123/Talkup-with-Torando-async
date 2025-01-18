@@ -1,6 +1,6 @@
 from db import Mongodb
 from values import DEV_MONGO_URI, DB_NAME
-from flask import Flask, request, jsonify
+from flask import Flask, request,send_from_directory, jsonify
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 from utility import validate_email_password, extract_username, serialize_dict, deserialize_dict, key_from_value
@@ -15,6 +15,15 @@ app = Flask(__name__)
 CORS(app)
 sio = SocketIO(app, cors_allowed_origins="*")
 
+@app.route('/assets/<path:filename>')
+def serve_assets(filename):
+    return send_from_directory('dist/assets', filename)
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
+    return send_from_directory("dist", "index.html")
+    
 @app.route('/signup', methods=['POST'])
 def signup():
     data = request.json
@@ -28,7 +37,7 @@ def signup():
     result = validate_email_password(email, password, confirmpassword)
     if result is True:
         name = extract_username(email)
-        user = {"name": name, "email": email, "password": password, "status": "offline", "friends": [], "pr": "profile.png"}
+        user = {"name": name, "email": email, "password": password, "status": "offline", "friends": [], "pr": "https://res.cloudinary.com/dfppd4tl7/image/upload/ej6rfibaerbrlztgpvah"}
         # friends:[ friendobjectid, .... ]
         query = {"email": email}
         
@@ -107,7 +116,7 @@ def register_give_friendlist(credentials):
             result = mongo.find_user(query)
             if result:
                 result["id"] = result.pop("_id")
-                result["msg"] = "See you soon"
+                result["msg"] = ""
                 result.pop("password")
                 result.pop("friends")
                 result = serialize_dict(result)
@@ -176,7 +185,7 @@ def add_friend(data):
     fdocument.pop("password")
     fdocument.pop("friends")
     
-    emit("added", [f"Added {fdocument['email']}", serialize_dict(fdocument)], to=ids.get(ydocument["id"], request.sid))
+    emit("added", [f"Added {fdocument['email']}", serialize_dict(fdocument)], to=request.sid)
     if ids.get(fdocument["id"]):
         emit("added", [f"{ydocument['email']} added you", serialize_dict(ydocument)], to=ids[fdocument["id"]])
 
@@ -257,12 +266,16 @@ def delete_account(credentials):
         mongo.users.delete_one(query)
         
         # Update each friend to remove the user from their friends list and emit the remove_friend message
+        print(friends)
         for fid in friends:
             friend_query = { "_id": fid }
             mongo.users.update_one(friend_query, {"$pull": {"friends": user_id}})
             friendSid = ids.get(fid)
             if friendSid:
-                sio.emit("remove_friend", str(user_id), to=friendSid)
+                print("\nHere")
+                print(friendSid)
+                print("Here\n")
+                emit("remove_friend", str(user_id), to=friendSid)
             else:
                 print("Friend is not connected")
         
