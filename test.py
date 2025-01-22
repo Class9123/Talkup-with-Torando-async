@@ -12,13 +12,27 @@ from utility import serialize_dict ,deserialize_dict,validate_email_password,ext
 from imageDb import upload_image_in_thread
 
 
-sio = AsyncServer(async_mode="tornado", cors_allowed_origins=["*"])
+sio = AsyncServer(async_mode="tornado", cors_allowed_origins="*")
 mongo = AsyncMongodb(DEV_MONGO_URI, DB_NAME)
 ids = {}  # { Dbid: socketId}
 verified = {}  # { "sid" : True or False ,..}
 
-class RequestHandler( baseRsClass):
-  pass
+class RequestHandler(baseRsClass):
+  def set_default_headers(self):
+    """
+    Set default headers for all requests handled by this base class.
+    """
+    self.set_header("Access-Control-Allow-Origin", "*")
+    self.set_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+    self.set_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+    self.set_header("Access-Control-Allow-Credentials", "true")
+
+  def options(self, *args, **kwargs):
+    """
+    Handle preflight OPTIONS requests.
+    """
+    self.set_status(204)
+    self.finish()
 class Assets(StaticFileHandler):
   def initialize(self, path):
     self.root = path
