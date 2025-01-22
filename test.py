@@ -11,6 +11,7 @@ from values import DEV_MONGO_URI, DB_NAME
 from utility import serialize_dict ,deserialize_dict,validate_email_password,extract_username,key_from_value
 from imageDb import upload_image_in_thread
 
+
 sio = AsyncServer(async_mode="tornado", cors_allowed_origins=["http://localhost:5000"])
 mongo = AsyncMongodb(DEV_MONGO_URI, DB_NAME)
 ids = {}  # { Dbid: socketId}
@@ -298,7 +299,7 @@ async def main():
   await mongo.connect()
   
   app = make_app()
-  app.listen(5000)
+  app.listen(5000 , address="0.0.0.0")
   print("server listening on port 5000")
   await asyncio.Event().wait()
     
