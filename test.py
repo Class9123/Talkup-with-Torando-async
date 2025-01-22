@@ -85,7 +85,7 @@ class Signup(RequestHandler):
     result = validate_email_password(email, password, confirmpassword)
     if result is True:
       name = extract_username(email)
-      user = {"name": name, "email": email, "password": password, "status": "offline", "friends": [], "pr": "https://res.cloudinary.com/dfppd4tl7/image/upload/ej6rfibaerbrlztgpvah"}
+      user = {"name": name, "email": email, "password": password, "status": "offline", "friends": [], "pr": "https://asset.cloudinary.com/dfppd4tl7/da71b4a6e1b789ade901e9580ff66b05"}
         # friends:[ friendobjectid, .... ]
       query = {"email": email}
       
