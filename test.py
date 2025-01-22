@@ -12,7 +12,7 @@ from utility import serialize_dict ,deserialize_dict,validate_email_password,ext
 from imageDb import upload_image_in_thread
 
 
-sio = AsyncServer(async_mode="tornado", cors_allowed_origins=["http://localhost:5000"])
+sio = AsyncServer(async_mode="tornado", cors_allowed_origins=["https://talkupv1-0.onrender.com/"])
 mongo = AsyncMongodb(DEV_MONGO_URI, DB_NAME)
 ids = {}  # { Dbid: socketId}
 verified = {}  # { "sid" : True or False ,..}
