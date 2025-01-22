@@ -14,7 +14,7 @@ verified = {}  # { "sid" : True or False ,..}
 app = Flask(__name__)
 CORS(app)
 sio = SocketIO(app, cors_allowed_origins="*")
-
+ 
 @app.route('/assets/<path:filename>')
 def serve_assets(filename):
     return send_from_directory('dist/assets', filename)
