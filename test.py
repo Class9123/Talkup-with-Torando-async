@@ -12,7 +12,7 @@ from utility import serialize_dict ,deserialize_dict,validate_email_password,ext
 from imageDb import upload_image_in_thread
 
 
-sio = AsyncServer(async_mode="tornado", cors_allowed_origins=["https://talkupv1-0.onrender.com/"])
+sio = AsyncServer(async_mode="tornado", cors_allowed_origins=["*"])
 mongo = AsyncMongodb(DEV_MONGO_URI, DB_NAME)
 ids = {}  # { Dbid: socketId}
 verified = {}  # { "sid" : True or False ,..}
@@ -25,7 +25,7 @@ class Assets(StaticFileHandler):
 
   def set_default_headers(self):
     super().set_default_headers()
-    self.set_header("Access-Control-Allow-Origin", "http://localhost:5000")
+    self.set_header("Access-Control-Allow-Origin", "*")
     self.set_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
     self.set_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
     self.set_header("Access-Control-Allow-Credentials", "true")
