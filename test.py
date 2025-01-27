@@ -33,6 +33,7 @@ class RequestHandler(baseRsClass):
     """
     self.set_status(204)
     self.finish()
+    
 class Assets(StaticFileHandler):
   def initialize(self, path):
     self.root = path
@@ -43,10 +44,16 @@ class Assets(StaticFileHandler):
     self.set_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
     self.set_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
     self.set_header("Access-Control-Allow-Credentials", "true")
+    
 class CatchAll(RequestHandler):
   def get(self, path):
-    self.render("dist/index.html")    
-
+    self.render("dist/index.html")  
+    
+class Alive(RequestHandler):
+  async def get(self):
+    self.set_status(200)
+    self.write("Website stopped from shutdown")
+    
 class Login(RequestHandler):
   async def post(self): 
     data = loads(self.request.body)
@@ -303,6 +310,7 @@ async def DeleteAccount(sid, credentials):
 def make_app():
   return Application([
     (r"/socket.io/", get_tornado_handler(sio)),
+    (r"/alive",Alive),
     (r"/login", Login),
     (r"/signup", Signup),
     (r"/assets/(.*)", Assets, {"path": os.path.join(os.getcwd(), "dist/assets")}),
